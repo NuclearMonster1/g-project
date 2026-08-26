@@ -23,8 +23,10 @@ ALLOWED_HOSTS = [h.strip() for h in _allowed if h.strip()]
 
 _csrf_origins = os.getenv("CSRF_TRUSTED_ORIGINS", "")
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in _csrf_origins.split(",") if o.strip()]
-if IS_VERCEL and not CSRF_TRUSTED_ORIGINS:
-    CSRF_TRUSTED_ORIGINS = ["https://*.vercel.app"]
+if IS_VERCEL and _vercel_url:
+    _vercel_origin = f"https://{_vercel_url}"
+    if _vercel_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(_vercel_origin)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
