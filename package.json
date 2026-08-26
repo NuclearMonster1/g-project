@@ -1,0 +1,11 @@
+{
+  "name": "g-project",
+  "private": true,
+  "scripts": {
+    "vercel:dev": "vercel dev",
+    "vercel:deploy": "vercel --prod"
+  },
+  "devDependencies": {
+    "vercel": "^39.3.0"
+  }
+}

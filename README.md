@@ -88,3 +88,17 @@ Metadata is in `backend/db.sqlite3`.
 ```powershell
 pytest
 ```
+
+## Deploy to Vercel (public website)
+
+See **[VERCEL.md](VERCEL.md)** for full steps.
+
+Quick deploy:
+
+```powershell
+npm install
+npx vercel login
+npx vercel --prod
+```
+
+Your app will be live at a `*.vercel.app` URL (not localhost).

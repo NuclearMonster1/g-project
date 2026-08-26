@@ -10,9 +10,21 @@ PROJECT_ROOT = BASE_DIR.parent
 
 load_dotenv(PROJECT_ROOT / ".env")
 
+IS_VERCEL = os.getenv("VERCEL") == "1"
+
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-insecure-key-change-in-production")
-DEBUG = os.getenv("DEBUG", "True").lower() == "true"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+DEBUG = os.getenv("DEBUG", "True").lower() == "true" and not IS_VERCEL
+
+_allowed = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+_vercel_url = os.getenv("VERCEL_URL")
+if _vercel_url:
+    _allowed.append(_vercel_url)
+ALLOWED_HOSTS = [h.strip() for h in _allowed if h.strip()]
+
+_csrf_origins = os.getenv("CSRF_TRUSTED_ORIGINS", "")
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in _csrf_origins.split(",") if o.strip()]
+if IS_VERCEL and not CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS = ["https://*.vercel.app"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -31,6 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -66,6 +79,24 @@ DATABASES = {
     }
 }
 
+if os.getenv("DATABASE_URL"):
+    import dj_database_url
+
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.getenv("DATABASE_URL"),
+            conn_max_age=600,
+            ssl_require=not DEBUG,
+        )
+    }
+elif IS_VERCEL:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": "/tmp/db.sqlite3",
+        }
+    }
+
 AUTH_USER_MODEL = "accounts.User"
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -83,9 +114,18 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [PROJECT_ROOT / "frontend" / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 MEDIA_ROOT = PROJECT_ROOT / os.getenv("MEDIA_ROOT", "media")
 STORAGE_ROOT = PROJECT_ROOT / os.getenv("STORAGE_ROOT", "storage")
+
+if IS_VERCEL:
+    MEDIA_ROOT = Path("/tmp/media")
+    STORAGE_ROOT = Path("/tmp/storage")
 MAX_UPLOAD_SIZE_MB = int(os.getenv("MAX_UPLOAD_SIZE_MB", "25"))
 FILE_ENCRYPTION_KEY = os.getenv("FILE_ENCRYPTION_KEY", "dev-key-must-be-32-bytes-long!!")
 
@@ -115,6 +155,10 @@ SIMPLE_JWT = {
 SCAN_CONFIDENCE_THRESHOLD = float(os.getenv("SCAN_CONFIDENCE_THRESHOLD", "0.7"))
 
 CORS_ALLOW_ALL_ORIGINS = DEBUG
+
+if IS_VERCEL:
+    CORS_ALLOW_ALL_ORIGINS = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 LOGIN_RATE_LIMIT = int(os.getenv("LOGIN_RATE_LIMIT", "5"))
 

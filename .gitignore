@@ -31,3 +31,7 @@ Thumbs.db
 # ML artifacts
 ml/models/*.pkl
 ml/models/*.h5
+
+# Vercel
+.vercel
+node_modules/
