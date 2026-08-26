@@ -35,3 +35,4 @@ ml/models/*.h5
 # Vercel
 .vercel
 node_modules/
+.env*

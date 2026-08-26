@@ -1,10 +1,11 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+
+export VERCEL=1
+export PYTHONPATH="${PWD}/backend:${PWD}"
 
 pip install -r requirements.txt
 
-export PYTHONPATH="${PWD}/backend"
 cd backend
-
 python manage.py collectstatic --noinput --clear
 python manage.py migrate --noinput
