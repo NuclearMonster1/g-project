@@ -24,8 +24,17 @@ document.getElementById("logout-btn").addEventListener("click", () => {
 
 const dropZone = document.getElementById("drop-zone");
 const fileInput = document.getElementById("file-input");
+let filePickerOpen = false;
 
-dropZone.addEventListener("click", () => fileInput.click());
+dropZone.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (filePickerOpen) return;
+  filePickerOpen = true;
+  fileInput.click();
+  window.setTimeout(() => {
+    filePickerOpen = false;
+  }, 500);
+});
 dropZone.addEventListener("dragover", (e) => {
   e.preventDefault();
   dropZone.classList.add("dragover");
@@ -37,7 +46,9 @@ dropZone.addEventListener("drop", (e) => {
   if (e.dataTransfer.files.length) uploadFile(e.dataTransfer.files[0]);
 });
 fileInput.addEventListener("change", () => {
+  filePickerOpen = false;
   if (fileInput.files.length) uploadFile(fileInput.files[0]);
+  fileInput.value = "";
 });
 
 async function uploadFile(file) {

@@ -1,47 +1,48 @@
-# G Project — Simple Secure File Web App
+# G Project
 
-Graduation project: a **simple local web application** for file upload, malware scan report, and download.
+![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-4.2-092E20?logo=django&logoColor=white)
+![DRF](https://img.shields.io/badge/Django_REST_Framework-3.14-red)
+![Firebase](https://img.shields.io/badge/Firebase-Auth-FFCA28?logo=firebase&logoColor=black)
+![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?logo=javascript&logoColor=black)
+![SQLite](https://img.shields.io/badge/SQLite-Local_DB-003B57?logo=sqlite&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?logo=vercel&logoColor=white)
+![License](https://img.shields.io/badge/License-Graduation_Project-lightgrey)
+
+**G Project** is a secure file web platform for a graduation project. Users sign up and log in with Firebase, upload files, receive an automatic malware scan report, and download their own encrypted files.
+
+**Live site:** [https://g-project-ten.vercel.app](https://g-project-ten.vercel.app)
+
+---
+
+## Tools & stack
+
+| Layer | Technology |
+|-------|------------|
+| Backend | Python 3.12, Django 4.2, Django REST Framework |
+| Auth | Firebase Authentication + JWT (SimpleJWT) |
+| Frontend | Django templates, HTML, CSS, vanilla JavaScript |
+| Security | AES file encryption (`cryptography`), malware heuristics |
+| Database | SQLite (local) / PostgreSQL optional (production) |
+| Static files | WhiteNoise (local), Vercel static CDN (production) |
+| Tests | pytest, pytest-django |
+| Deploy | Vercel serverless (Python + static assets) |
+| Optional | Docker Compose for local container runs |
+
+---
 
 ## Features
 
-- Sign up and log in with **Firebase Authentication**
-- Upload files (drag-and-drop)
-- Automatic malware scan (shows a report)
-- Download your own files
-- Runs locally on your machine
+- Firebase email/password sign up and login
+- Drag-and-drop file upload
+- Automatic malware scan with confidence score and report
+- AES-256 encrypted storage on disk
+- Download and delete your own files
+- Single URL for frontend pages and REST API
 
-**Removed for simplicity:** admin panel, quarantine blocking, audit log, file sharing.
+---
 
-## Firebase Auth setup
-
-1. Open [Firebase Console](https://console.firebase.google.com/) and create a project.
-2. Enable **Authentication → Sign-in method → Email/Password**.
-3. Add a **Web app** (Project settings → Your apps → `</>`).
-4. Copy the config values into `.env`:
-
-```
-FIREBASE_API_KEY=your-api-key
-FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_APP_ID=your-app-id
-```
-
-5. Restart the Django server.
-
-Sign up creates the user in Firebase, then the app stores the same email in Django so file upload/download still work.
-
-## Run locally
-
-```powershell
-cd "C:\Users\youss\OneDrive\Desktop\G project"
-.\.venv\Scripts\Activate.ps1
-cd backend
-python manage.py runserver
-```
-
-Open **http://127.0.0.1:8000/**
-
-## First time setup
+## Quick start (local)
 
 ```powershell
 cd "C:\Users\youss\OneDrive\Desktop\G project"
@@ -54,52 +55,75 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-## How it works
+Open **http://127.0.0.1:8000/**
 
-1. **Sign up** with Firebase (email + password)
-2. **Log in** with the same Firebase account
-3. **Upload** a file on the dashboard
-4. System **scans** the file and saves a report
-5. **Download** the file anytime (scan report is informational only)
+---
 
-## Where files are saved
+## Deploy to Vercel
 
+```powershell
+# First time
+.\deploy-setup.bat
+
+# Later deploys
+.\deploy.bat
 ```
-G project/storage/{your-user-id}/{file-id}.enc
-```
 
-Metadata is in `backend/db.sqlite3`.
+See [docs/Vercel&deployment.md](docs/Vercel&deployment.md) for full details.
 
-## API
+---
 
-| Endpoint | Description |
+## Documentation
+
+| Document | Description |
 |----------|-------------|
-| `POST /api/auth/register/` | Register (local fallback) |
-| `POST /api/auth/login/` | Login (local fallback) |
-| `GET /api/auth/firebase-config/` | Firebase web config |
-| `POST /api/auth/firebase/` | Firebase sign-up / login |
-| `GET /api/files/` | List your files |
-| `POST /api/files/upload/` | Upload |
-| `GET /api/files/{id}/download/` | Download |
-| `GET /api/scanning/report/{id}/` | Scan report |
+| [Folder & file structure](docs/Folder&fileStructure.md) | Project tree and what each folder does |
+| [Backend](docs/Backend.md) | Django apps, API, auth, files, scanning |
+| [Frontend](docs/Frontend.md) | Templates, CSS, JavaScript, pages |
+| [Vercel & deployment](docs/Vercel&deployment.md) | Production hosting and auto-deploy |
+
+---
+
+## API overview
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/auth/firebase-config/` | Firebase web config |
+| `POST` | `/api/auth/firebase/` | Firebase login / sign-up |
+| `GET` | `/api/auth/me/` | Current user |
+| `GET` | `/api/files/` | List your files |
+| `POST` | `/api/files/upload/` | Upload a file |
+| `GET` | `/api/files/{id}/download/` | Download a file |
+| `DELETE` | `/api/files/{id}/delete/` | Delete a file |
+| `GET` | `/api/scanning/report/{id}/` | Malware scan report |
+
+---
 
 ## Tests
 
 ```powershell
+cd backend
 pytest
 ```
 
-## Deploy to Vercel (public website)
+---
 
-See **[VERCEL.md](VERCEL.md)** for full steps.
+## Project structure (short)
 
-Quick deploy:
-
-```powershell
-npm install
-$env:Path = "C:\Program Files\nodejs;" + $env:Path
-& "C:\Program Files\nodejs\npx.cmd" vercel login
-& "C:\Program Files\nodejs\npx.cmd" vercel --prod
+```
+G project/
+├── api/           # Vercel serverless entry
+├── backend/       # Django project + apps
+├── frontend/      # HTML templates + static assets
+├── ml/            # Malware inference engine
+├── scripts/       # Deploy automation
+├── tests/         # pytest suite
+├── docs/          # Documentation
+└── vercel.json    # Vercel config
 ```
 
-Your app will be live at a `*.vercel.app` URL (not localhost).
+---
+
+## Author
+
+Graduation project — **NuclearMonster1**
