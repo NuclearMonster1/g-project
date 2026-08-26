@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — G Project</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="header-row">
+      <h1>Dashboard</h1>
+      <button id="logout-btn" class="secondary">Log Out</button>
+    </header>
+    <p id="user-info" class="subtitle"></p>
+
+    <section class="card">
+      <h2>Upload File</h2>
+      <div id="drop-zone" class="drop-zone">
+        <p>Drag & drop a file here or click to browse</p>
+        <input type="file" id="file-input" hidden>
+      </div>
+      <p id="upload-msg" class="msg"></p>
+    </section>
+
+    <section class="card">
+      <h2>My Files</h2>
+      <div id="files-list"></div>
+    </section>
+  </main>
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

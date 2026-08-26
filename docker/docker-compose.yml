@@ -1,0 +1,17 @@
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../backend:/app/backend
+      - ../frontend:/app/frontend
+      - ../ml:/app/ml
+      - ../media:/app/media
+      - ../storage:/app/storage
+    env_file:
+      - ../.env
+    environment:
+      - DEBUG=True

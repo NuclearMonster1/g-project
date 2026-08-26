@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — G Project</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <main class="container home-page">
+    <h1>Sign Up</h1>
+    <p class="subtitle">Create an account with Firebase Authentication</p>
+
+    <section class="card home-card">
+      <form id="register-form">
+        <input type="email" id="reg-email" placeholder="Email" required autocomplete="email">
+        <input type="password" id="reg-password" placeholder="Password (min 8 chars)" required minlength="8" autocomplete="new-password">
+        <button type="button" id="register-btn">Create Account</button>
+      </form>
+      <p id="register-msg" class="msg"></p>
+
+      <div class="home-actions">
+        <a href="/" class="btn btn-secondary">Log In</a>
+      </div>
+    </section>
+  </main>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="/static/js/auth.js?v=3"></script>
+</body>
+</html>

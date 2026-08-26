@@ -1,0 +1,46 @@
+A web platform where users upload files, each file is automatically scanned by an AI/ML malware detection engine before it becomes accessible to anyone, suspicious files are quarantined instantly, and every scan produces a human-readable security report. The platform also supports encrypted storage, role-based access control, and secure file sharing links.
+
+Tech Stack (required)
+Backend: Python, Django, Django REST Framework
+AI/ML: TensorFlow (or scikit-learn for the Random Forest component), a hybrid model: Random Forest on static PE-file features + a deep learning model (CNN) for sequence/byte-level analysis
+Database: PostgreSQL
+Auth: JWT-based authentication
+Storage: Server-side AES-256 encryption for stored files
+Deployment target: Docker containers, HTTPS/TLS 1.3 (design for this even if we run locally for now)
+Frontend: Simple responsive web UI (React or Django templates — recommend whichever is faster to prototype) with drag-and-drop upload
+Functional Requirements (must implement)
+User registration with email verification before account activation
+JWT-based login/session with configurable token expiry
+Role-based access control: Administrator and Regular User roles
+File upload up to 500 MB via drag-and-drop
+Automatic AI malware scan of every uploaded file before it's accessible
+Automatic quarantine of files classified as malicious, blocked from download/sharing until an Admin reviews them
+A detailed per-file security report: classification, confidence score, top contributing features (use SHAP for explainability), and recommended action
+Time-limited, encrypted file-sharing links to specific users/groups
+An immutable audit log of uploads, downloads, shares, and quarantine decisions
+An Admin dashboard: review quarantined files, manage users, view system-wide security stats
+Non-Functional Requirements
+Scan time ≤3s for files up to 10MB; UI/API responses ≤2s under normal load
+AES-256 at rest, TLS 1.3 in transit, bcrypt (cost factor ≥12) for passwords
+Architecture should support horizontal scaling (stateless app servers)
+80%+ automated test coverage (pytest), PEP 8 compliant
+GDPR-aligned: data minimization, right-to-erasure endpoint
+AI Model (this is the core novelty — don't skip it)
+Use the EMBER dataset (or a subset) for training a static-feature-based malware classifier (Random Forest) on PE header/section/import-table features
+Add a second model or ensemble component for behavioral/sequence analysis (CNN over byte n-grams is acceptable for a prototype)
+Target metrics: ≥95% accuracy, F1-score ≥90%, ROC-AUC ≥0.97 (report actual results honestly — don't fabricate numbers)
+Integrate SHAP to generate feature-importance explanations that feed into the plain-language security report
+Include a training script, evaluation script (confusion matrix, cross-validation), and a way to save/load the trained model for inference in the Django app
+What I need from you
+Propose a project structure (folders for backend, ml/, frontend, tests, docker) before writing code
+Build incrementally: auth → file upload/storage → ML scanning integration → quarantine workflow → reporting → sharing → admin dashboard → tests
+Explain trade-offs where the spec is ambiguous (e.g., dataset size limits, hosting a public EMBER dataset locally) rather than guessing silently
+Write unit and integration tests as you build each module, not at the end
+Include a README with setup, how to run the ML training pipeline, and how to run the app locally
+Flag anywhere the implementation has to diverge from the "500MB upload / 10,000 concurrent users / 99.5% uptime" targets for a local prototype, and note what would be needed for that at production scale
+Constraints
+Keep security defaults sane out of the box (no hardcoded secrets, .env for config, parameterized queries via Django ORM)
+Don't fabricate benchmark numbers — if you can't train on the full EMBER dataset in this environment, use a representative subsample and say so clearly
+Prioritize a working end-to-end pipeline (upload → scan → quarantine/approve → report) over polishing UI first
+
+Start by proposing the folder structure and the order in which you'll build the modules

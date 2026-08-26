@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>G Project — Secure File Platform</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <main class="container home-page">
+    <h1>Log In</h1>
+    <p class="subtitle">Access your files with Firebase Auth</p>
+
+    <section class="card home-card">
+      <form id="login-form">
+        <input type="email" id="login-email" placeholder="Email" required autocomplete="email">
+        <input type="password" id="login-password" placeholder="Password" required autocomplete="current-password">
+        <button type="button" id="login-btn">Log In</button>
+      </form>
+      <p id="login-msg" class="msg"></p>
+
+      <div class="home-actions">
+        <a href="/signup/" class="btn btn-secondary">Sign Up</a>
+      </div>
+    </section>
+  </main>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="/static/js/auth.js?v=3"></script>
+</body>
+</html>
