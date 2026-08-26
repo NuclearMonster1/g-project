@@ -97,8 +97,9 @@ Quick deploy:
 
 ```powershell
 npm install
-npx vercel login
-npx vercel --prod
+$env:Path = "C:\Program Files\nodejs;" + $env:Path
+& "C:\Program Files\nodejs\npx.cmd" vercel login
+& "C:\Program Files\nodejs\npx.cmd" vercel --prod
 ```
 
 Your app will be live at a `*.vercel.app` URL (not localhost).
